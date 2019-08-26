@@ -10,9 +10,12 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
+	cout<<"estoy vivo"<<endl;
 	string dir_socket;
 	int sflag = 0;
 	int opt;
+
+	struct sockaddr_un client;
 	
  	while ((opt = getopt (argc, argv, "s:")) != -1) 
 	{
@@ -32,15 +35,40 @@ int main(int argc, char** argv) {
 		dir_socket == "/tmp/db.tuples.sock.";
 	}
 	
+	//CReo el socket
+        int sock = socket(AF_UNIX, SOCK_STREAM, 0);
+        if (sock < 0) {
+            perror("opening stream socket");
+            exit(1);
+        }
+
+	//SE conecta el socket
+        client.sun_family = AF_UNIX;
+        strcpy(client.sun_path, dir_socket.c_str());
+        if (connect(sock, (struct sockaddr *) &client, sizeof(struct sockaddr_un)) < 0) {
+            close(sock);
+            perror("connecting stream socket");
+            exit(1);
+        }
+
+	//Para mandar mensajes de prueba
+	/*while(1<2){
+		char mensaje[1024];
+   		fgets(mensaje,1024,stdin);
+		write(sock, mensaje, sizeof(mensaje));
+	}*/
+
+
+
 	string cmd = "";
 	
 	while (cmd != "quit") {
 		if(cmd == "connect")
-		{
-			cout<<1<<endl;		
+		{	
 		}
 		else if (cmd == "disconect")
-		{}
+		{
+		}
 		cout << ">";
 		cin >> cmd;
 	}
