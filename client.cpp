@@ -10,13 +10,11 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
-	cout<<"estoy vivo"<<endl;
 	string dir_socket;
 	int sflag = 0;
 	int opt;
-
 	struct sockaddr_un client;
-	
+
  	while ((opt = getopt (argc, argv, "s:")) != -1) 
 	{
         	switch (opt)
@@ -41,37 +39,79 @@ int main(int argc, char** argv) {
             perror("opening stream socket");
             exit(1);
         }
-
-	//SE conecta el socket
-        client.sun_family = AF_UNIX;
-        strcpy(client.sun_path, dir_socket.c_str());
-        if (connect(sock, (struct sockaddr *) &client, sizeof(struct sockaddr_un)) < 0) {
-            close(sock);
-            perror("connecting stream socket");
-            exit(1);
-        }
-
+	
 	//Para mandar mensajes de prueba
 	/*while(1<2){
 		char mensaje[1024];
    		fgets(mensaje,1024,stdin);
 		write(sock, mensaje, sizeof(mensaje));
 	}*/
-
-
-
+	
 	string cmd = "";
 	
 	while (cmd != "quit") {
-		if(cmd == "connect")
-		{	
-		}
-		else if (cmd == "disconect")
-		{
-		}
+	
 		cout << ">";
 		cin >> cmd;
-	}
+		int par1 = cmd.find('(');
+		int par2 = cmd.find(')');
+		if(cmd == "connect")
+		{
+			//SE conecta el socket
+        		client.sun_family = AF_UNIX;
+        		strcpy(client.sun_path, dir_socket.c_str());
+        		if (connect(sock, (struct sockaddr *) &client, sizeof(struct sockaddr_un)) < 0)
+	 		{
+           			 close(sock);
+           			 perror("connecting stream socket");
+          			  exit(1);
+       			 }		
+		}
+		else if (cmd == "disconnect")
+		{
+			cout<<2<<endl;
+		}
+		else if (cmd == "list")
+		{
+			cout<<3<<endl;
+		}
+		else
+		{
+			string comando = cmd.substr(0,par1);	
+			string kv = cmd.substr(par1);
+			int coma = kv.find(',');
+			int p = kv.find(')');
+			int key = stoi(kv.substr(1,coma-1));
+			string value = kv.substr(coma+1,p-3);
+			int k = stoi(kv.substr(1,kv.size()-2));
+			if(comando == "insert")
+			{
+				cout<<"La key es:"<<key<<endl;
+				cout<<"El value es:"<<value<<endl;
+			}
+			else if(comando == "get")
+			{
 
+				cout<<"La key es:"<<k<<endl;
+				
+			}
+			else if(comando == "peek")
+			{
+				cout<<"La key es:"<<k<<endl;
+				
+			}
+			else if(comando == "update")
+			{
+				cout<<"La key es:"<<key<<endl;
+				cout<<"El value es:"<<value<<endl;
+			}
+			else if(comando == "delete")
+			{
+				cout<<"La key es:"<<k<<endl;
+				
+			}
+		}
+	}
+	
 	return 0;	
 }
