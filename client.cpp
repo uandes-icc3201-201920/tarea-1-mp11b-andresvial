@@ -134,6 +134,10 @@ int main(int argc, char** argv) {
 					cout<<"Comando no valido"<<endl;
 					continue;
 				}
+				//Se recibe el mensaje mandado por el socket como respuesta al comando
+				char recibido[1024];
+				read(sock, recibido, 1024);
+				cout<<recibido<<endl;
 			}
 		}
 		else if(cmd != "quit")
@@ -142,10 +146,7 @@ int main(int argc, char** argv) {
 			continue;
 		}
 		
-		//Se recibe el mensaje mandado por el socket como respuesta al comando
-		char recibido[1024];
-		read(sock, recibido, 1024);
-		cout<<recibido<<endl;
+		
 	}
 	
 	return 0;	
