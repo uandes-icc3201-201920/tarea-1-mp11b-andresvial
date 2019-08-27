@@ -13,7 +13,6 @@ using namespace std;
 KVStore db;
 
 int main(int argc, char** argv) {
-	
 	int sflag = 0;
 	int opt;
 	string dir_socket;
@@ -23,8 +22,8 @@ int main(int argc, char** argv) {
 	struct sockaddr_un server;
 	
 	// Procesar opciones de linea de comando
-    while ((opt = getopt (argc, argv, "s:")) != -1) {
-        switch (opt)
+	while ((opt = getopt (argc, argv, "s:")) != -1) {
+		switch (opt)
 		{
 			/* Procesar el flag s si el usuario lo ingresa */
 			case 's':
@@ -33,8 +32,8 @@ int main(int argc, char** argv) {
 				break;
 			default:
 				return EXIT_FAILURE;
-          }	    	
-    }
+	  	}	    	
+	}
 
 	if (sflag == 0){
 		dir_socket = "/tmp/db.tuples.sock";
@@ -55,7 +54,7 @@ int main(int argc, char** argv) {
             exit(1);
         }
 
-	//Se detiene a escuhar y luego a aceptar conecciones en un loop infinito
+	//Se detiene a escuchar y luego a aceptar conecciones en un loop infinito
 	listen(sock, 10);
 	int readvalue;
         while(1<2) {
@@ -68,8 +67,13 @@ int main(int argc, char** argv) {
                     perror("reading stream message");
                 else if (readvalue == 0)
                     cout<<"Terminando coneccion\n";
-                else
-                    cout<<"-->"<<mensaje<<"\n";
+                else{
+			cout<<"-->"<<mensaje<<"\n";
+			if (strcmp(mensaje,"get")==0){
+				strcpy(mensaje,"el valor es 2");
+				write(cliente_sock, mensaje, sizeof(mensaje));  
+			}
+		}
             } while (readvalue > 0);
             close(cliente_sock);
         }

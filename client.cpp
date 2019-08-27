@@ -60,12 +60,6 @@ int main(int argc, char** argv) {
            			 perror("connecting stream socket");
           			  exit(1);
        			 }		
-			//Para mandar mensajes de prueba
-			while(1<2){
-			char mensaje[1024];
-   			fgets(mensaje,1024,stdin);
-			write(sock, mensaje, sizeof(mensaje));
-			}
 		}
 		else if (cmd == "disconnect")
 		{
@@ -97,33 +91,41 @@ int main(int argc, char** argv) {
 						cout<<"El value es:"<<v<<endl;
 					}
 					else
-					{		 
-						string key = kv.substr(1,coma-1);
+					{		
+						int key = stoi(kv.substr(1,coma-1));
 						cout<<"La key es:"<<key<<endl;
 						cout<<"El value es:"<<value<<endl;
 					}
 				}
 				else if(comando == "get")
 				{
-					string k = kv.substr(1,kv.size()-2);
+			   		string mensaje= "get";
+					write(sock, mensaje.c_str(), sizeof(mensaje.c_str()));
+			   		mensaje= "jojojo";
+					write(sock, mensaje.c_str(), sizeof(mensaje.c_str()));
+
+					char valor[1024];
+					read(sock,valor, 1024);
+					cout<<valor<<endl;
+					int k = stoi(kv.substr(1,kv.size()-2));
 					cout<<"La key es:"<<k<<endl;
 					
 				}
 				else if(comando == "peek")
 				{
-					string k = kv.substr(1,kv.size()-2);
+					int k = stoi(kv.substr(1,kv.size()-2));
 					cout<<"La key es:"<<k<<endl;
 					
 				}
 				else if(comando == "update")
 				{
-					string key = kv.substr(1,coma-1);
+					int key = stoi(kv.substr(1,coma-1));
 					cout<<"La key es:"<<key<<endl;
 					cout<<"El value es:"<<value<<endl;
 				}
 				else if(comando == "delete")
 				{
-					string k = kv.substr(1,kv.size()-2);
+					int k = stoi(kv.substr(1,kv.size()-2));
 					cout<<"La key es:"<<k<<endl;
 					
 				}
@@ -134,7 +136,7 @@ int main(int argc, char** argv) {
 				}
 			}
 		}
-		else if(cmd != "quit")
+		else
 		{
 			cout<<"Comando no valido"<<endl;
 			continue;
