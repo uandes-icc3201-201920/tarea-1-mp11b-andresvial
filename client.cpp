@@ -33,15 +33,10 @@ int main(int argc, char** argv) {
 		dir_socket == "/tmp/db.tuples.sock.";
 	}
 	
-	//CReo el socket
-        int sock = socket(AF_UNIX, SOCK_STREAM, 0);
-        if (sock < 0) {
-            perror("opening stream socket");
-            exit(1);
-        }
-	
 	string cmd = "";
 	
+	int sock = 0;
+
 	while (cmd != "quit") {
 	
 		cout << ">";
@@ -51,6 +46,12 @@ int main(int argc, char** argv) {
 		string comando = cmd.substr(0,par1);
 		if(cmd == "connect")
 		{
+			//CReo el socket
+      		        sock = socket(AF_UNIX, SOCK_STREAM, 0);
+       			if (sock < 0) {
+           		 	perror("opening stream socket");
+           		 	exit(1);
+      			  }
 			//SE conecta el socket
         		client.sun_family = AF_UNIX;
         		strcpy(client.sun_path, dir_socket.c_str());
@@ -58,8 +59,14 @@ int main(int argc, char** argv) {
 	 		{
            			 close(sock);
            			 perror("connecting stream socket");
-          			  exit(1);
+          			 exit(1);
        			 }		
+			//Para mandar mensajes de prueba
+			while(1<2){
+			char mensaje[1024];
+   			fgets(mensaje,1024,stdin);
+			write(sock, mensaje, sizeof(mensaje));
+			}
 		}
 		else if (cmd == "disconnect")
 		{
@@ -88,45 +95,41 @@ int main(int argc, char** argv) {
 					if(coma == -1) //Sino hay coma en el string, se asume que se querrá insertar un value
 					{
 						string v = kv.substr(1,kv.size()-2);
-						cout<<"El value es:"<<v<<endl;
+						string instruccion = "i1," + v;
+						cout<<"Instruccion:"<<instruccion<<endl;
 					}
 					else
-					{		
-						int key = stoi(kv.substr(1,coma-1));
-						cout<<"La key es:"<<key<<endl;
-						cout<<"El value es:"<<value<<endl;
+					{		 
+						string key = kv.substr(1,coma-1);
+						string instruccion = "i2," + key + ","+value;
+						cout<<"Instruccion:"<<instruccion<<endl;
 					}
 				}
 				else if(comando == "get")
 				{
-			   		string mensaje= "get";
-					write(sock, mensaje.c_str(), sizeof(mensaje.c_str()));
-			   		mensaje= "jojojo";
-					write(sock, mensaje.c_str(), sizeof(mensaje.c_str()));
-
-					char valor[1024];
-					read(sock,valor, 1024);
-					cout<<valor<<endl;
-					int k = stoi(kv.substr(1,kv.size()-2));
-					cout<<"La key es:"<<k<<endl;
+					string k = kv.substr(1,kv.size()-2);
+					string instruccion = "g," + k;
+					cout<<"Instruccion:"<<instruccion<<endl;
 					
 				}
 				else if(comando == "peek")
 				{
-					int k = stoi(kv.substr(1,kv.size()-2));
-					cout<<"La key es:"<<k<<endl;
+					string k = kv.substr(1,kv.size()-2);
+					string instruccion = "p," + k;
+					cout<<"Instruccion:"<<instruccion<<endl;
 					
 				}
 				else if(comando == "update")
 				{
-					int key = stoi(kv.substr(1,coma-1));
-					cout<<"La key es:"<<key<<endl;
-					cout<<"El value es:"<<value<<endl;
+					string key = kv.substr(1,coma-1);
+					string instruccion = "u," + key + ","+value;
+					cout<<"Instruccion:"<<instruccion<<endl;
 				}
 				else if(comando == "delete")
 				{
-					int k = stoi(kv.substr(1,kv.size()-2));
-					cout<<"La key es:"<<k<<endl;
+					string k = kv.substr(1,kv.size()-2);
+					string instruccion = "d," + k;
+					cout<<"Instruccion:"<<instruccion<<endl;
 					
 				}
 				else //Si no es ningun comando
@@ -136,7 +139,7 @@ int main(int argc, char** argv) {
 				}
 			}
 		}
-		else
+		else if(cmd != "quit")
 		{
 			cout<<"Comando no valido"<<endl;
 			continue;
