@@ -40,13 +40,6 @@ int main(int argc, char** argv) {
             exit(1);
         }
 	
-	//Para mandar mensajes de prueba
-	/*while(1<2){
-		char mensaje[1024];
-   		fgets(mensaje,1024,stdin);
-		write(sock, mensaje, sizeof(mensaje));
-	}*/
-	
 	string cmd = "";
 	
 	while (cmd != "quit") {
@@ -55,6 +48,7 @@ int main(int argc, char** argv) {
 		cin >> cmd;
 		int par1 = cmd.find('(');
 		int par2 = cmd.find(')');
+		string comando = cmd.substr(0,par1);
 		if(cmd == "connect")
 		{
 			//SE conecta el socket
@@ -66,6 +60,12 @@ int main(int argc, char** argv) {
            			 perror("connecting stream socket");
           			  exit(1);
        			 }		
+			//Para mandar mensajes de prueba
+			while(1<2){
+			char mensaje[1024];
+   			fgets(mensaje,1024,stdin);
+			write(sock, mensaje, sizeof(mensaje));
+			}
 		}
 		else if (cmd == "disconnect")
 		{
@@ -75,41 +75,69 @@ int main(int argc, char** argv) {
 		{
 			cout<<3<<endl;
 		}
+		else if (comando == "insert" || comando == "get" || comando == "peek" || comando == "update" || comando == "delete" )
+		{	
+			string kv = cmd.substr(par1);//Substring a partir del parentesis '('
+			int coma = kv.find(',');//Encuentra la posicion de la coma dentro del substring kv 
+			int p = kv.find(')');//Encuentra el parentesis final en el substring kv ')'
+			string value = kv.substr(coma+1,p-3);//String value
+
+			if(kv.size() < 3) //Si no se escribe nada entre los parentesis será invalido
+			{
+				cout<<"Comando no valido"<<endl;
+				continue;
+			}
+			else{
+
+				if(comando == "insert")
+				{
+					if(coma == -1) //Sino hay coma en el string, se asume que se querrá insertar un value
+					{
+						string v = kv.substr(1,kv.size()-2);
+						cout<<"El value es:"<<v<<endl;
+					}
+					else
+					{		
+						int key = stoi(kv.substr(1,coma-1));
+						cout<<"La key es:"<<key<<endl;
+						cout<<"El value es:"<<value<<endl;
+					}
+				}
+				else if(comando == "get")
+				{
+					int k = stoi(kv.substr(1,kv.size()-2));
+					cout<<"La key es:"<<k<<endl;
+					
+				}
+				else if(comando == "peek")
+				{
+					int k = stoi(kv.substr(1,kv.size()-2));
+					cout<<"La key es:"<<k<<endl;
+					
+				}
+				else if(comando == "update")
+				{
+					int key = stoi(kv.substr(1,coma-1));
+					cout<<"La key es:"<<key<<endl;
+					cout<<"El value es:"<<value<<endl;
+				}
+				else if(comando == "delete")
+				{
+					int k = stoi(kv.substr(1,kv.size()-2));
+					cout<<"La key es:"<<k<<endl;
+					
+				}
+				else //Si no es ningun comando
+				{	
+					cout<<"Comando no valido"<<endl;
+					continue;
+				}
+			}
+		}
 		else
 		{
-			string comando = cmd.substr(0,par1);	
-			string kv = cmd.substr(par1);
-			int coma = kv.find(',');
-			int p = kv.find(')');
-			int key = stoi(kv.substr(1,coma-1));
-			string value = kv.substr(coma+1,p-3);
-			int k = stoi(kv.substr(1,kv.size()-2));
-			if(comando == "insert")
-			{
-				cout<<"La key es:"<<key<<endl;
-				cout<<"El value es:"<<value<<endl;
-			}
-			else if(comando == "get")
-			{
-
-				cout<<"La key es:"<<k<<endl;
-				
-			}
-			else if(comando == "peek")
-			{
-				cout<<"La key es:"<<k<<endl;
-				
-			}
-			else if(comando == "update")
-			{
-				cout<<"La key es:"<<key<<endl;
-				cout<<"El value es:"<<value<<endl;
-			}
-			else if(comando == "delete")
-			{
-				cout<<"La key es:"<<k<<endl;
-				
-			}
+			cout<<"Comando no valido"<<endl;
+			continue;
 		}
 	}
 	
