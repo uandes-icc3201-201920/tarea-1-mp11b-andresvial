@@ -97,33 +97,33 @@ int main(int argc, char** argv) {
 						cout<<"El value es:"<<v<<endl;
 					}
 					else
-					{		
-						int key = stoi(kv.substr(1,coma-1));
+					{		 
+						string key = kv.substr(1,coma-1);
 						cout<<"La key es:"<<key<<endl;
 						cout<<"El value es:"<<value<<endl;
 					}
 				}
 				else if(comando == "get")
 				{
-					int k = stoi(kv.substr(1,kv.size()-2));
+					string k = kv.substr(1,kv.size()-2);
 					cout<<"La key es:"<<k<<endl;
 					
 				}
 				else if(comando == "peek")
 				{
-					int k = stoi(kv.substr(1,kv.size()-2));
+					string k = kv.substr(1,kv.size()-2);
 					cout<<"La key es:"<<k<<endl;
 					
 				}
 				else if(comando == "update")
 				{
-					int key = stoi(kv.substr(1,coma-1));
+					string key = kv.substr(1,coma-1);
 					cout<<"La key es:"<<key<<endl;
 					cout<<"El value es:"<<value<<endl;
 				}
 				else if(comando == "delete")
 				{
-					int k = stoi(kv.substr(1,kv.size()-2));
+					string k = kv.substr(1,kv.size()-2);
 					cout<<"La key es:"<<k<<endl;
 					
 				}
@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
 				}
 			}
 		}
-		else
+		else if(cmd != "quit")
 		{
 			cout<<"Comando no valido"<<endl;
 			continue;
