@@ -71,8 +71,22 @@ int main(int argc, char** argv) {
                     perror("reading stream message");
                 else if (readvalue == 0)
                     cout<<"Terminando coneccion\n";
-                else
-                    cout<<"-->"<<mensaje<<"\n";
+                else{
+			char *token;
+			token = strtok(mensaje, ",");
+			while( token != NULL ) {
+				if (strcmp(token,"g")==0){
+					token = strtok(NULL, ",");
+					string resultado = token;
+					write(sock, resultado.c_str(), sizeof(resultado.c_str()));
+				}
+				
+
+				token = strtok(NULL, ",");
+			}
+			
+		}
+			
             } while (readvalue > 0);
             close(cliente_sock);
         }
