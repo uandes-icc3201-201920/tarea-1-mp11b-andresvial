@@ -60,21 +60,18 @@ int main(int argc, char** argv) {
            			 close(sock);
            			 perror("connecting stream socket");
           			 exit(1);
-       			 }		
-			//Para mandar mensajes de prueba
-			while(1<2){
-			char mensaje[1024];
-   			fgets(mensaje,1024,stdin);
-			write(sock, mensaje, sizeof(mensaje));
-			}
+       			 }
+			continue;		
 		}
 		else if (cmd == "disconnect")
 		{
-			cout<<2<<endl;
+			close(sock);
+			continue;
 		}
 		else if (cmd == "list")
 		{
 			cout<<3<<endl;
+			continue;
 		}
 		else if (comando == "insert" || comando == "get" || comando == "peek" || comando == "update" || comando == "delete" )
 		{	
@@ -96,40 +93,40 @@ int main(int argc, char** argv) {
 					{
 						string v = kv.substr(1,kv.size()-2);
 						string instruccion = "i1," + v;
-						cout<<"Instruccion:"<<instruccion<<endl;
+						write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
 					}
 					else
 					{		 
 						string key = kv.substr(1,coma-1);
 						string instruccion = "i2," + key + ","+value;
-						cout<<"Instruccion:"<<instruccion<<endl;
+						write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
 					}
 				}
 				else if(comando == "get")
 				{
 					string k = kv.substr(1,kv.size()-2);
 					string instruccion = "g," + k;
-					cout<<"Instruccion:"<<instruccion<<endl;
+					write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
 					
 				}
 				else if(comando == "peek")
 				{
 					string k = kv.substr(1,kv.size()-2);
 					string instruccion = "p," + k;
-					cout<<"Instruccion:"<<instruccion<<endl;
+					write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
 					
 				}
 				else if(comando == "update")
 				{
 					string key = kv.substr(1,coma-1);
 					string instruccion = "u," + key + ","+value;
-					cout<<"Instruccion:"<<instruccion<<endl;
+					write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
 				}
 				else if(comando == "delete")
 				{
 					string k = kv.substr(1,kv.size()-2);
 					string instruccion = "d," + k;
-					cout<<"Instruccion:"<<instruccion<<endl;
+					write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
 					
 				}
 				else //Si no es ningun comando
@@ -144,6 +141,11 @@ int main(int argc, char** argv) {
 			cout<<"Comando no valido"<<endl;
 			continue;
 		}
+		
+		//Se recibe el mensaje mandado por el socket como respuesta al comando
+		char recibido[1024];
+		read(sock, recibido, 1024);
+		cout<<recibido<<endl;
 	}
 	
 	return 0;	
