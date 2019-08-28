@@ -1,6 +1,7 @@
 #include <iostream>
-#include<string>
+#include <string>
 #include <memory>
+#include <sstream>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -19,7 +20,6 @@ int main(int argc, char** argv) {
 	int opt;
 	string dir_socket;
 	srand (time(NULL));
-	int clave_autogenerada = rand() % 9000 +1000;
 
 	struct sockaddr_un server;
 	
@@ -57,6 +57,7 @@ int main(int argc, char** argv) {
             perror("Error al bindiear");
             exit(1);
         }
+	
 
 	//Se detiene a escuhar y luego a aceptar conecciones en un loop infinito
 	listen(sock, 10);
@@ -75,13 +76,37 @@ int main(int argc, char** argv) {
 			char *token;
 			token = strtok(mensaje, ",");
 			while( token != NULL ) {
-				if (strcmp(token,"g")==0){
+				if (strcmp(token,"i1")==0)//Comando: insert(value)
+				{
+					int clave_autogenerada = rand() % 9000 +1000; //Se genera una clave autogenerada
 					token = strtok(NULL, ",");
-					string resultado = token;
-					write(sock, resultado.c_str(), sizeof(resultado.c_str()));
+					strcpy(mensaje,token);
+					string v = mensaje;
+					stringstream k;
+					k << clave_autogenerada;
+					db.insert(std::pair<unsigned long, string>(clave_autogenerada, v));
+                  		 	write(cliente_sock,(k.str()).c_str(), sizeof((k.str()).c_str()));
 				}
-				
-
+				else if (strcmp(token,"g")==0)//Comando: get(key)
+				{
+					token = strtok(NULL, ",");
+					strcpy(mensaje,token);
+					string s = mensaje;
+                  		 	int k = stoi(s);
+                  		 	write(cliente_sock,db[k].c_str(), sizeof(db[k].c_str()));
+				}
+				else if (strcmp(token,"p")==0)
+				{
+					token = strtok(NULL, ",");
+					strcpy(mensaje,token);
+                  		 	write(cliente_sock, mensaje, sizeof(mensaje));
+				}
+				else if (strcmp(token,"d")==0)
+				{
+					token = strtok(NULL, ",");
+					strcpy(mensaje,token);
+                  		 	write(cliente_sock, mensaje, sizeof(mensaje));
+				}
 				token = strtok(NULL, ",");
 			}
 			
@@ -110,7 +135,7 @@ int main(int argc, char** argv) {
 	//db.insert(std::pair<unsigned long, Value>(1000, val));
 		
 	// Imprimir lo que hemos agregado al mapa KV.
-	cout << db[1]<< " " << db[1]<< endl;
+	//cout << db[1]<< " " << db[1]<< endl;
 
 	return 0;
 }
