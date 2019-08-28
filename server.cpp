@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
             exit(1);
         }
 	
-
+	db.insert(std::pair<unsigned long, string>(1020, "hola"));
 	//Se detiene a escuhar y luego a aceptar conecciones en un loop infinito
 	listen(sock, 10);
 	int readvalue;
@@ -75,6 +75,7 @@ int main(int argc, char** argv) {
                 else{
 			char *token;
 			token = strtok(mensaje, ",");
+			int cont =0;
 			while( token != NULL ) {
 				if (strcmp(token,"i1")==0)//Comando: insert(value)
 				{
@@ -99,15 +100,35 @@ int main(int argc, char** argv) {
 				{
 					token = strtok(NULL, ",");
 					strcpy(mensaje,token);
+					string s = mensaje;
+                  		 	int k = stoi(s);
+					if(db.find(k) != db.end())
+					{
+						strcpy(mensaje,"True");
+					}
+					else
+					{
+						strcpy(mensaje,"False");
+					}
                   		 	write(cliente_sock, mensaje, sizeof(mensaje));
 				}
 				else if (strcmp(token,"d")==0)
 				{
 					token = strtok(NULL, ",");
 					strcpy(mensaje,token);
+					string s = mensaje;
+                  		 	int k = stoi(s);
+					db.erase(k);//Elimina la tupla kv
                   		 	write(cliente_sock, mensaje, sizeof(mensaje));
 				}
+				else if (strcmp(token,"i2")==0)
+				{
+					token = strtok(NULL, ",");
+					strcpy(mensaje,token);
+                  		 	cout<<cont<<endl;
+				}
 				token = strtok(NULL, ",");
+				cont++;
 			}
 			
 		}
