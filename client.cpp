@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
 	string cmd = "";
 	
 	int sock = 0;
+	bool conectado = false;
 
 	while (cmd != "quit") {
 	
@@ -49,18 +50,23 @@ int main(int argc, char** argv) {
 			//CReo el socket
       		        sock = socket(AF_UNIX, SOCK_STREAM, 0);
        			if (sock < 0) {
-           		 	perror("opening stream socket");
-           		 	exit(1);
-      			  }
+           		 	cout<<"Error al crear el socket"<<endl;
+           		 	continue;
+      			}
 			//SE conecta el socket
         		client.sun_family = AF_UNIX;
         		strcpy(client.sun_path, dir_socket.c_str());
         		if (connect(sock, (struct sockaddr *) &client, sizeof(struct sockaddr_un)) < 0)
 	 		{
            			 close(sock);
-           			 perror("connecting stream socket");
-          			 exit(1);
+           			 cout<<"Error al conectar el socket"<<endl;
+          			 continue;
        			 }
+			else{
+				conectado = true;
+				cout<<"Conectado con exito al servidor"<<endl;
+			}
+
 			continue;		
 		}
 		else if (cmd == "disconnect")
@@ -68,11 +74,21 @@ int main(int argc, char** argv) {
 			if(sock > 0)
 			{
 				close(sock);
+				cout<<"Desconectado con exito del servidor"<<endl;
+			}
+
+			else{
+				cout<<"No se pudo desconectar ya que no hay conexion en primer lugar"<<endl;
 			}
 			continue;
 		}
 		else if (cmd == "list")
 		{
+			if (conectado==false){
+				cout<<"No te has conectado al server"<<endl;
+				continue;
+			}
+
 			string instruccion = "l,";
 			write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
 			char recibido[1024];
@@ -81,7 +97,12 @@ int main(int argc, char** argv) {
 			continue;
 		}
 		else if (comando == "insert" || comando == "get" || comando == "peek" || comando == "update" || comando == "delete")
-		{	
+		{
+			if (conectado==false){
+				cout<<"No te has conectado al server"<<endl;
+				continue;
+			}
+	
 			string kv = cmd.substr(par1);//Substring a partir del parentesis '('
 			int coma = kv.find(',');//Encuentra la posicion de la coma dentro del substring kv 
 			int p = kv.find(')');//Encuentra el parentesis final en el substring kv ')'
