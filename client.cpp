@@ -65,15 +65,22 @@ int main(int argc, char** argv) {
 		}
 		else if (cmd == "disconnect")
 		{
-			close(sock);
+			if(sock > 0)
+			{
+				close(sock);
+			}
 			continue;
 		}
 		else if (cmd == "list")
 		{
-			cout<<3<<endl;
+			string instruccion = "l,";
+			write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
+			char recibido[1024];
+			read(sock, recibido, 1024);
+			cout<<recibido<<endl;
 			continue;
 		}
-		else if (comando == "insert" || comando == "get" || comando == "peek" || comando == "update" || comando == "delete" )
+		else if (comando == "insert" || comando == "get" || comando == "peek" || comando == "update" || comando == "delete")
 		{	
 			string kv = cmd.substr(par1);//Substring a partir del parentesis '('
 			int coma = kv.find(',');//Encuentra la posicion de la coma dentro del substring kv 
@@ -145,7 +152,6 @@ int main(int argc, char** argv) {
 			cout<<"Comando no valido"<<endl;
 			continue;
 		}
-		
 		
 	}
 	
