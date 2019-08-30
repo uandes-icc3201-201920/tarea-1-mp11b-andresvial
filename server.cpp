@@ -71,15 +71,16 @@ int main(int argc, char** argv) {
 	listen(sock, 10);
 	int readvalue;
         while(1<2) {
-	    char mensaje[1024];
+	    char mensaje[50000];
             int cliente_sock = accept(sock, 0, 0);
             if (cliente_sock == -1)
-                perror("aceptar");
+                cout<<"Error al aceptar la conexion"<<endl;
             else do {
-                if ((readvalue = read(cliente_sock, mensaje, 1024)) < 0)
+		cout<<"Un cliente se ha conectado"<<endl;
+                if ((readvalue = read(cliente_sock, mensaje, 50000)) < 0)
                     perror("reading stream message");
                 else if (readvalue == 0)
-                    cout<<"Terminando coneccion\n";
+                    cout<<"Coneccion terminada\n";
                 else{
 			char *token;
 			token = strtok(mensaje, ",");
@@ -94,7 +95,7 @@ int main(int argc, char** argv) {
 					k << clave_autogenerada;
 					db.insert(std::pair<unsigned long, string>(clave_autogenerada, v));
 					clave_autogenerada++;
-                  		 	write(cliente_sock,(k.str()).c_str(), sizeof((k.str()).c_str()));
+                  		 	write(cliente_sock,(k.str()).c_str(), 50000);
 				}
 				else if (strcmp(token,"g")==0)//Comando: get(key)
 				{
@@ -102,7 +103,7 @@ int main(int argc, char** argv) {
 					strcpy(mensaje,token);
 					string s = mensaje;
                   		 	int k = stoi(s);
-                  		 	write(cliente_sock,db[k].c_str(), sizeof(db[k].c_str()));
+                  		 	write(cliente_sock,db[k].c_str(), 50000);
 				}
 				else if (strcmp(token,"p")==0)
 				{
@@ -119,7 +120,7 @@ int main(int argc, char** argv) {
 					{
 						strcpy(mensaje,"False");
 					}
-                  		 	write(cliente_sock, mensaje, sizeof(mensaje));
+                  		 	write(cliente_sock, mensaje, 50000);
 				}
 				else if (strcmp(token,"d")==0)
 				{
@@ -128,7 +129,8 @@ int main(int argc, char** argv) {
 					string s = mensaje;//Se convierte el mensaje en string
                   		 	int k = stoi(s);//Se convierte el string de la key, a un int para poder buscarlo en db y eliminarlo
 					db.erase(k);//Elimina la tupla kv
-                  		 	write(cliente_sock, mensaje, sizeof(mensaje));
+					strcpy(mensaje,"Borrado con exito");
+                  		 	write(cliente_sock, mensaje, 50000);
 				}
 				else if (strcmp(token,"i2")==0)
 				{
@@ -136,22 +138,22 @@ int main(int argc, char** argv) {
 					string k = token;
 					int key = stoi(k);
 					token = strtok(NULL, ",");
-					/*string value = token;*/
-					cout<<token<<endl;
+					token[strlen(token)-1] = '\0';
+					string value = token;
 					
-					/*if(db.find(key) != db.end())
+					if(db.find(key) != db.end())
 					{
 						string error = "Error: La Key ya se encuentra en la BD";
 						strcpy(mensaje,error.c_str());
-						write(cliente_sock, mensaje, sizeof(mensaje));
+						write(cliente_sock, mensaje, 50000);
 					}
 					else
 					{
 						string m = "Se Insertó correctamente";
 						strcpy(mensaje,m.c_str());
 						db.insert(std::pair<unsigned long, string>(key,value));
-						write(cliente_sock, mensaje, sizeof(mensaje));
-					}*/
+						write(cliente_sock, mensaje, 50000);
+					}
 				
 				}
 				else if (strcmp(token,"l")==0)
@@ -169,7 +171,7 @@ int main(int argc, char** argv) {
 					//Se le coloca corchete final a la lista
 					lista += "]";
 					strcpy(mensaje,lista.c_str());
-					write(cliente_sock,mensaje, sizeof(mensaje));
+					write(cliente_sock,mensaje, 50000);
 					
 				}
 				token = strtok(NULL, ",");

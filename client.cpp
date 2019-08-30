@@ -78,28 +78,28 @@ int main(int argc, char** argv) {
 			}
 
 			else{
-				cout<<"No se pudo desconectar ya que no hay conexion en primer lugar"<<endl;
+				cout<<"Error: No se pudo desconectar ya que no hay conexion en primer lugar"<<endl;
 			}
 			continue;
 		}
 		else if (cmd == "list")
 		{
 			if (conectado==false){
-				cout<<"No te has conectado al server"<<endl;
+				cout<<"Error: No te has conectado al server"<<endl;
 				continue;
 			}
 
 			string instruccion = "l,";
-			write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
-			char recibido[1024];
-			read(sock, recibido, 1024);
+			write(sock, instruccion.c_str(), 50000);
+			char recibido[50000];
+			read(sock, recibido, 50000);
 			cout<<recibido<<endl;
 			continue;
 		}
 		else if (comando == "insert" || comando == "get" || comando == "peek" || comando == "update" || comando == "delete")
 		{
 			if (conectado==false){
-				cout<<"No te has conectado al server"<<endl;
+				cout<<"Error: No te has conectado al server"<<endl;
 				continue;
 			}
 	
@@ -121,40 +121,40 @@ int main(int argc, char** argv) {
 					{
 						string v = kv.substr(1,kv.size()-2);
 						string instruccion = "i1," + v;
-						write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
+						write(sock, instruccion.c_str(), 50000);
 					}
 					else
 					{		 
 						string key = kv.substr(1,coma-1);
 						string instruccion = "i2," + key + ","+value;
-						write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
+						write(sock, instruccion.c_str(), 50000);
 					}
 				}
 				else if(comando == "get")
 				{
 					string k = kv.substr(1,kv.size()-2);
 					string instruccion = "g," + k;
-					write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
+					write(sock, instruccion.c_str(), 50000);
 					
 				}
 				else if(comando == "peek")
 				{
 					string k = kv.substr(1,kv.size()-2);
 					string instruccion = "p," + k;
-					write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
+					write(sock, instruccion.c_str(), 50000);
 					
 				}
 				else if(comando == "update")
 				{
 					string key = kv.substr(1,coma-1);
 					string instruccion = "u," + key + ","+value;
-					write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
+					write(sock, instruccion.c_str(), 50000);
 				}
 				else if(comando == "delete")
 				{
 					string k = kv.substr(1,kv.size()-2);
 					string instruccion = "d," + k;
-					write(sock, instruccion.c_str(), sizeof(instruccion.c_str()));
+					write(sock, instruccion.c_str(),50000);
 					
 				}
 				else //Si no es ningun comando
@@ -163,8 +163,8 @@ int main(int argc, char** argv) {
 					continue;
 				}
 				//Se recibe el mensaje mandado por el socket como respuesta al comando
-				char recibido[1024];
-				read(sock, recibido, 1024);
+				char recibido[50000];
+				read(sock, recibido, 50000);
 				cout<<recibido<<endl;
 			}
 		}
