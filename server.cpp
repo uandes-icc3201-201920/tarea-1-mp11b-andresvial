@@ -57,13 +57,16 @@ int main(int argc, char** argv) {
             perror("Error al bindiear");
             exit(1);
         }
-	
+	//Insertar valores random
 	db.insert(std::pair<unsigned long, string>(1020, "hola"));
 	db.insert(std::pair<unsigned long, string>(1030, "hola"));
 	db.insert(std::pair<unsigned long, string>(1040, "hola"));
 	db.insert(std::pair<unsigned long, string>(1050, "hola"));
 	db.insert(std::pair<unsigned long, string>(1060, "hola"));
 	db.insert(std::pair<unsigned long, string>(1070, "hola"));
+	
+	int clave_autogenerada = rand() % 9000 +1000; //Se genera una clave autogenerada
+
 	//Se detiene a escuhar y luego a aceptar conecciones en un loop infinito
 	listen(sock, 10);
 	int readvalue;
@@ -84,13 +87,13 @@ int main(int argc, char** argv) {
 			while( token != NULL ) {
 				if (strcmp(token,"i1")==0)//Comando: insert(value)
 				{
-					int clave_autogenerada = rand() % 9000 +1000; //Se genera una clave autogenerada
 					token = strtok(NULL, ",");
 					strcpy(mensaje,token);
 					string v = mensaje;
 					stringstream k;
 					k << clave_autogenerada;
 					db.insert(std::pair<unsigned long, string>(clave_autogenerada, v));
+					clave_autogenerada++;
                   		 	write(cliente_sock,(k.str()).c_str(), sizeof((k.str()).c_str()));
 				}
 				else if (strcmp(token,"g")==0)//Comando: get(key)
@@ -130,20 +133,38 @@ int main(int argc, char** argv) {
 				else if (strcmp(token,"i2")==0)
 				{
 					token = strtok(NULL, ",");
-					strcpy(mensaje,token);
+					string k = token;
+					int key = stoi(k);
+					token = strtok(NULL, ",");
+					/*string value = token;*/
+					cout<<token<<endl;
+					
+					/*if(db.find(key) != db.end())
+					{
+						string error = "Error: La Key ya se encuentra en la BD";
+						strcpy(mensaje,error.c_str());
+						write(cliente_sock, mensaje, sizeof(mensaje));
+					}
+					else
+					{
+						string m = "Se Insertó correctamente";
+						strcpy(mensaje,m.c_str());
+						db.insert(std::pair<unsigned long, string>(key,value));
+						write(cliente_sock, mensaje, sizeof(mensaje));
+					}*/
+				
 				}
 				else if (strcmp(token,"l")==0)
 				{
 					string lista = "[";//Se añade corchete a la lista
 					//Se leen todas las key y si es encontrada la key se manda a la lista 
-					for(int i = 1000; i<10000; i++)
+					map<unsigned long, string>::iterator it;
+					for ( it = db.begin(); it != db.end(); it++ )
 					{
-						if(db.find(i) != db.end())
-						{
-							stringstream k;
-							k << i;
-							lista += " "+k.str()+" ";
-						}
+						stringstream k;
+						k << it->first;
+						lista += " "+k.str()+" ";
+  
 					}
 					//Se le coloca corchete final a la lista
 					lista += "]";
