@@ -33,13 +33,9 @@ int main(int argc, char** argv) {
 				dir_socket = optarg;
 				break;
 			default:
-				return EXIT_FAILURE;
+				dir_socket = "/tmp/db.tuples.sock";
           }	    	
     }
-
-	if (sflag == 0){
-		dir_socket = "/tmp/db.tuples.sock";
-	}
 
 	//Se crea el socket
 	int sock = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -76,7 +72,6 @@ int main(int argc, char** argv) {
             if (cliente_sock == -1)
                 cout<<"Error al aceptar la conexion"<<endl;
             else do {
-		cout<<"Un cliente se ha conectado"<<endl;
                 if ((readvalue = read(cliente_sock, mensaje, 50000)) < 0)
                     perror("reading stream message");
                 else if (readvalue == 0)
@@ -103,9 +98,17 @@ int main(int argc, char** argv) {
 					strcpy(mensaje,token);
 					string s = mensaje;
                   		 	int k = stoi(s);
-                  		 	write(cliente_sock,db[k].c_str(), 50000);
+					if(db.find(k) == db.end())
+					{
+						string error = "Error: La Key no se encuentra en la BD";
+						strcpy(mensaje,error.c_str());
+						write(cliente_sock, mensaje, 50000);
+					}
+					else{
+                  		 		write(cliente_sock,db[k].c_str(), 50000);
+					}
 				}
-				else if (strcmp(token,"p")==0)
+				else if (strcmp(token,"p")==0)//Comando: peek(key)
 				{
 					token = strtok(NULL, ",");
 					strcpy(mensaje,token);
@@ -122,7 +125,7 @@ int main(int argc, char** argv) {
 					}
                   		 	write(cliente_sock, mensaje, 50000);
 				}
-				else if (strcmp(token,"d")==0)
+				else if (strcmp(token,"d")==0)//Comando: delete
 				{
 					token = strtok(NULL, ",");
 					strcpy(mensaje,token);
@@ -132,13 +135,13 @@ int main(int argc, char** argv) {
 					strcpy(mensaje,"Borrado con exito");
                   		 	write(cliente_sock, mensaje, 50000);
 				}
-				else if (strcmp(token,"i2")==0)
+				else if (strcmp(token,"i2")==0)//Comando: insert(key,value)
 				{
 					token = strtok(NULL, ",");
 					string k = token;
 					int key = stoi(k);
 					token = strtok(NULL, ",");
-					token[strlen(token)-1] = '\0';
+					token[strlen(token)] = '\0';
 					string value = token;
 					
 					if(db.find(key) != db.end())
@@ -156,7 +159,32 @@ int main(int argc, char** argv) {
 					}
 				
 				}
-				else if (strcmp(token,"l")==0)
+
+				else if (strcmp(token,"u")==0)//Comando: update(key,value)
+				{
+					token = strtok(NULL, ",");
+					string k = token;
+					int key = stoi(k);
+					token = strtok(NULL, ",");
+					token[strlen(token)] = '\0';
+					string value = token;
+					
+					if(db.find(key) == db.end())
+					{
+						string error = "Error: La Key no se encuentra en la BD";
+						strcpy(mensaje,error.c_str());
+						write(cliente_sock, mensaje, 50000);
+					}
+					else
+					{
+						string m = "Se actualizo el valor correctamente";
+						strcpy(mensaje,m.c_str());
+						db[key] = value;
+						write(cliente_sock, mensaje, 50000);
+					}
+				
+				}
+				else if (strcmp(token,"l")==0)//Comando: list
 				{
 					string lista = "[";//Se añade corchete a la lista
 					//Se leen todas las key y si es encontrada la key se manda a la lista 
@@ -183,27 +211,6 @@ int main(int argc, char** argv) {
             } while (readvalue > 0);
             close(cliente_sock);
         }
-
-	// Uso elemental del almacenamiento KV:
-	
-	// Creamos un arreglo de bytes a mano
-	//byte data[] = { 0x01, 0x01, 0x01, 0x01, 0x01 };
-
-	// Luego un vector utilizando el arreglo de bytes
-	//vector<byte> vdata(data, data + sizeof(data));
-	
-	// Creamos el valor
-	//Value val = { 5, vdata };
-	
-	// Insertamos un par clave, valor directamente
-	// en el mapa KV
-	
-	// Nota: Debiera diseñarse una solución más robusta con una interfaz
-	// adecuada para acceder a la estructura.
-	//db.insert(std::pair<unsigned long, Value>(1000, val));
-		
-	// Imprimir lo que hemos agregado al mapa KV.
-	//cout << db[1]<< " " << db[1]<< endl;
 
 	return 0;
 }
