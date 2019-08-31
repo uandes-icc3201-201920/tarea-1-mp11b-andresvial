@@ -141,7 +141,6 @@ int main(int argc, char** argv) {
 					string k = token;
 					int key = stoi(k);
 					token = strtok(NULL, ",");
-					token[strlen(token)] = '\0';
 					string value = token;
 					
 					if(db.find(key) != db.end())

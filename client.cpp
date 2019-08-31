@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <ctime>
 #include "util.h"
 
 using namespace std;
@@ -37,7 +38,6 @@ int main(int argc, char** argv) {
 	
 	int sock = 0;
 	bool conectado = false;
-
 	while (cmd != "quit") {
 	
 		cout << ">";
@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
 		int par1 = cmd.find('(');
 		int par2 = cmd.find(')');
 		string comando = cmd.substr(0,par1);
+
 		if(cmd == "connect")
 		{
 			//CReo el socket
@@ -105,8 +106,10 @@ int main(int argc, char** argv) {
 	
 			string kv = cmd.substr(par1);//Substring a partir del parentesis '('
 			int coma = kv.find(',');//Encuentra la posicion de la coma dentro del substring kv 
-			int p = kv.find(')');//Encuentra el parentesis final en el substring kv ')'
-			string value = kv.substr(coma+1,p-3);//String value
+			int p = kv.find(')')-5;//Encuentra el parentesis final en el substring kv ')'
+			string value = kv.substr(coma+1);//String value
+			int n = value.length();//Toma el largo del string value
+			value.erase(n-1);//Se elimina el ultimo elemento 
 
 			if(kv.size() < 3) //Si no se escribe nada entre los parentesis será invalido
 			{
