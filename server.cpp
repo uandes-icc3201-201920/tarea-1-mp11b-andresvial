@@ -16,7 +16,6 @@ KVStore db;
 
 int main(int argc, char** argv) {
 	
-	int sflag = 0;
 	int opt;
 	string dir_socket;
 	srand (time(NULL));
@@ -29,7 +28,6 @@ int main(int argc, char** argv) {
 		{
 			/* Procesar el flag s si el usuario lo ingresa */
 			case 's':
-				sflag = 1;
 				dir_socket = optarg;
 				break;
 			default:
@@ -117,6 +115,7 @@ int main(int argc, char** argv) {
 					//Si la key se encuentra en la bd, se envia el mesaje true y si no se envia false
 					if(db.find(k) != db.end())
 					{
+				
 						strcpy(mensaje,"True");
 					}
 					else

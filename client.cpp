@@ -42,19 +42,18 @@ int main(int argc, char** argv) {
 	
 		cout << ">";
 		cin >> cmd;
-		int par1 = cmd.find('(');
-		int par2 = cmd.find(')');
-		string comando = cmd.substr(0,par1);
+		int par1 = cmd.find('(');//Encuentra en el cmd el primer parentesis
+		string comando = cmd.substr(0,par1);//String que que toma solo el comando(connect,disconnect,etc.)
 
 		if(cmd == "connect")
 		{
-			//CReo el socket
+			//Creo el socket
       		        sock = socket(AF_UNIX, SOCK_STREAM, 0);
        			if (sock < 0) {
            		 	cout<<"Error al crear el socket"<<endl;
            		 	continue;
       			}
-			//SE conecta el socket
+			//Se conecta el socket
         		client.sun_family = AF_UNIX;
         		strcpy(client.sun_path, dir_socket.c_str());
         		if (connect(sock, (struct sockaddr *) &client, sizeof(struct sockaddr_un)) < 0)
@@ -106,7 +105,6 @@ int main(int argc, char** argv) {
 	
 			string kv = cmd.substr(par1);//Substring a partir del parentesis '('
 			int coma = kv.find(',');//Encuentra la posicion de la coma dentro del substring kv 
-			int p = kv.find(')')-5;//Encuentra el parentesis final en el substring kv ')'
 			string value = kv.substr(coma+1);//String value
 			int n = value.length();//Toma el largo del string value
 			value.erase(n-1);//Se elimina el ultimo elemento 
