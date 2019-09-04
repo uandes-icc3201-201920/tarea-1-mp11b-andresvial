@@ -1,11 +1,12 @@
-flags=-Wall
+flags=
 
 server: server.cpp client.cpp
 	g++ $(flags) server.cpp -o server
 	g++ $(flags) client.cpp -o client
 
 clean:
-	rm -f *.o
+	rm -f server
+	rm -f client
 
 
 
