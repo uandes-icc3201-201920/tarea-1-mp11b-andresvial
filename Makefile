@@ -1,12 +1,15 @@
+CC=g++
 flags=-Wall
 
-server: server.cpp client.cpp
-	g++ $(flags) server.cpp -o server
-	g++ $(flags) client.cpp -o client
+all: server client
+
+server: server.cpp util.h
+	$(CC) $(flags) server.cpp -o s
+
+client: client.cpp 
+	$(CC) $(flags) client.cpp -o c
 
 clean:
-	rm -f server
-	rm -f client
-
-
+	rm -f s
+	rm -f c
 
