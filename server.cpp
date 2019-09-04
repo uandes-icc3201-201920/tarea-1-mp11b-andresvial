@@ -53,11 +53,11 @@ int main(int argc, char** argv) {
         }
 	//Insertar valores random
 	db.insert(std::pair<unsigned long, string>(1020, "hola"));
-	db.insert(std::pair<unsigned long, string>(1030, "hola"));
-	db.insert(std::pair<unsigned long, string>(1040, "hola"));
-	db.insert(std::pair<unsigned long, string>(1050, "hola"));
-	db.insert(std::pair<unsigned long, string>(1060, "hola"));
-	db.insert(std::pair<unsigned long, string>(1070, "hola"));
+	db.insert(std::pair<unsigned long, string>(1030, "como"));
+	db.insert(std::pair<unsigned long, string>(1040, "estas"));
+	db.insert(std::pair<unsigned long, string>(1050, "5000"));
+	db.insert(std::pair<unsigned long, string>(1060, "teclado"));
+	db.insert(std::pair<unsigned long, string>(1070, "144"));
 	
 	int clave_autogenerada = rand() % 9000 +1000; //Se genera una clave autogenerada
 

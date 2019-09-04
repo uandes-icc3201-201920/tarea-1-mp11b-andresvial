@@ -47,34 +47,39 @@ int main(int argc, char** argv) {
 
 		if(cmd == "connect")
 		{
-			//Creo el socket
-      		        sock = socket(AF_UNIX, SOCK_STREAM, 0);
-       			if (sock < 0) {
-           		 	cout<<"Error al crear el socket"<<endl;
-           		 	continue;
-      			}
-			//Se conecta el socket
-        		client.sun_family = AF_UNIX;
-        		strcpy(client.sun_path, dir_socket.c_str());
-        		if (connect(sock, (struct sockaddr *) &client, sizeof(struct sockaddr_un)) < 0)
-	 		{
-           			 close(sock);
-           			 cout<<"Error al conectar el socket"<<endl;
-          			 continue;
-       			 }
-			else{
-				conectado = true;
-				cout<<"Conectado con exito al servidor"<<endl;
+      		        if (conectado==false){
+				//Creo el socket
+				sock = socket(AF_UNIX, SOCK_STREAM, 0);
+	       			if (sock < 0) {
+		   		 	cout<<"Error al crear el socket"<<endl;
+		   		 	continue;
+	      			}
+				//Se conecta el socket
+				client.sun_family = AF_UNIX;
+				strcpy(client.sun_path, dir_socket.c_str());
+				if (connect(sock, (struct sockaddr *) &client, sizeof(struct sockaddr_un)) < 0)
+		 		{
+		   			 close(sock);
+		   			 cout<<"Error al conectar el socket"<<endl;
+		  			 continue;
+	       			 }
+				else{
+					conectado = true;
+					cout<<"Conectado con exito al servidor"<<endl;
+				}
 			}
-
+			else{
+				cout<<"Ya estas conectado"<<endl;
+			}
 			continue;		
 		}
 		else if (cmd == "disconnect")
 		{
-			if(sock > 0)
+			if(conectado==true)
 			{
 				close(sock);
 				cout<<"Desconectado con exito del servidor"<<endl;
+				conectado=false;
 			}
 
 			else{
