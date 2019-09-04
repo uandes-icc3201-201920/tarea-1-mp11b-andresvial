@@ -85,6 +85,7 @@ int main(int argc, char** argv) {
 					strcpy(mensaje,token);
 					string v = mensaje;
 					stringstream k;
+					k << "La key generada para el valor es: ";
 					k << clave_autogenerada;
 					db.insert(std::pair<unsigned long, string>(clave_autogenerada, v));
 					clave_autogenerada++;
