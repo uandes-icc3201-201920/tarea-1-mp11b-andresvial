@@ -7,7 +7,7 @@ Repositorio base para tarea 1 de Sistemas Operativos y Redes 201920
 * Los comandos: que se cumpliera el timeout del comando connect, diferenciar en el codigo los comandos insert(key,value) e insert(value), el manejo de substrings para estos comandos.
 
 **Funciones no implementadas:**
-* Todas las funciones fueron implementadas con exito
+* Faltó implementar el timeout de 10 segundos para cuando se ejecuta el cliente
 
 **Problemas conocidos:**
 * Si se inserta o se hace get con una key como un string en vez de int, ocurren errores.
