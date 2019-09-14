@@ -1,10 +1,10 @@
 CC=g++
-flags=-Wall
+flags=
 
 all: server client
 
 server: server.cpp util.h
-	$(CC) $(flags) server.cpp -o server
+	$(CC) $(flags) -pthread server.cpp -o server
 
 client: client.cpp 
 	$(CC) $(flags) client.cpp -o client
