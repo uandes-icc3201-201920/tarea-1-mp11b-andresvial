@@ -1,5 +1,5 @@
 CC=g++
-flags=
+flags=-Wall
 
 all: server client
 
