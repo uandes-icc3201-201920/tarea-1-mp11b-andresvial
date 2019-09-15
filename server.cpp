@@ -162,6 +162,13 @@ void* funcion_thread( void* arg){
 					write(conn->sock,mensaje, 50000);
 					
 				}
+
+				else if (strcmp(token,"di")==0)//Comando: disconnect
+				{
+				    close(conn->sock);
+				    free(conn);
+				    pthread_exit(0);	
+				}
 				token = strtok(NULL, ",");
 				cont++;
 			}
@@ -169,9 +176,6 @@ void* funcion_thread( void* arg){
 		}
 			
             } while (readvalue > 0);
-            close(conn->sock);
-            free(conn);
-	    pthread_exit(0);
 }
 
 int main(int argc, char** argv) {

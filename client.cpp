@@ -77,6 +77,8 @@ int main(int argc, char** argv) {
 		{
 			if(conectado==true)
 			{
+				string instruccion = "di,";
+				write(sock, instruccion.c_str(), 50000);
 				close(sock);
 				cout<<"Desconectado con exito del servidor"<<endl;
 				conectado=false;
