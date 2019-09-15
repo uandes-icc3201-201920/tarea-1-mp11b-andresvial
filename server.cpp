@@ -22,7 +22,7 @@ typedef struct
 
 pthread_rwlock_t lock_rw = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t *p = (pthread_rwlock_t *)&lock_rw;
-int clave_autogenerada = rand() % 9000 +1000; //Se genera una clave autogenerada
+int clave_autogenerada;
 
 // Almacenamiento KV
 map<unsigned long, string> db;
@@ -250,6 +250,7 @@ int main(int argc, char** argv) {
 	db.insert(std::pair<unsigned long, string>(1060, "teclado"));
 	db.insert(std::pair<unsigned long, string>(1070, "144"));
 	
+	clave_autogenerada = rand() % 9000 +1000; //Se genera una clave autogenerada
 
 	//Se detiene a escuhar y luego a aceptar conecciones en un loop infinito
 	pthread_t t1;
