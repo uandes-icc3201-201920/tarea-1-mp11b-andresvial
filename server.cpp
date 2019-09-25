@@ -27,6 +27,7 @@ int clave_autogenerada;
 // Almacenamiento KV
 map<unsigned long, string> db;
 
+//Funcion que ejecuta el Thread
 void* funcion_thread( void* arg){
 	connection_t * conn;
 	conn = (connection_t *)arg;
@@ -49,11 +50,12 @@ void* funcion_thread( void* arg){
 					string v = mensaje;
 					stringstream k;
 					k << "La key generada para el valor es: ";
-					pthread_rwlock_wrlock(p);
+					//Seccion critica
+					pthread_rwlock_wrlock(p);//Se activa el lock
 					k << clave_autogenerada;
 					db.insert(std::pair<unsigned long, string>(clave_autogenerada, v));
 					clave_autogenerada++;
-					pthread_rwlock_unlock(p);
+					pthread_rwlock_unlock(p);//Se libera el lock
                   		 	write(conn->sock,(k.str()).c_str(), 50000);
 				}
 				else if (strcmp(token,"g")==0)//Comando: get(key)
@@ -62,7 +64,8 @@ void* funcion_thread( void* arg){
 					strcpy(mensaje,token);
 					string s = mensaje;
                   		 	int k = stoi(s);
-					pthread_rwlock_rdlock(p);
+					//Secccion critica
+					pthread_rwlock_rdlock(p);//Se activa el lock
 					if(db.find(k) == db.end())
 					{
 						string error = "Error: La Key no se encuentra en la BD";
@@ -72,7 +75,7 @@ void* funcion_thread( void* arg){
 					else{
                   		 		write(conn->sock,db[k].c_str(), 50000);
 					}
-					pthread_rwlock_unlock(p);
+					pthread_rwlock_unlock(p);//Se libera el lock
 				}
 				else if (strcmp(token,"p")==0)//Comando: peek(key)
 				{
@@ -80,8 +83,9 @@ void* funcion_thread( void* arg){
 					strcpy(mensaje,token);
 					string s = mensaje;
                   		 	int k = stoi(s);
-					//Si la key se encuentra en la bd, se envia el mesaje true y si no se envia false
-					pthread_rwlock_rdlock(p);
+					//Secccion critica
+					//Si la key se encuentra en la bd, se envia el mensaje true y si no se envia false
+					pthread_rwlock_rdlock(p);//Se activa el lock
 					if(db.find(k) != db.end())
 					{
 				
@@ -91,8 +95,8 @@ void* funcion_thread( void* arg){
 					{
 						strcpy(mensaje,"False");
 					}
-					pthread_rwlock_unlock(p);
                   		 	write(conn->sock, mensaje, 50000);
+					pthread_rwlock_unlock(p);//Se libera el lock
 				}
 				else if (strcmp(token,"d")==0)//Comando: delete
 				{
@@ -100,8 +104,9 @@ void* funcion_thread( void* arg){
 					strcpy(mensaje,token);
 					string s = mensaje;//Se convierte el mensaje en string
                   		 	int k = stoi(s);//Se convierte el string de la key, a un int para poder buscarlo en db y eliminarlo
+					//Secccion critica
 					//Se revisa si la key se encuentra en la bd
-					pthread_rwlock_wrlock(p);
+					pthread_rwlock_wrlock(p);//Se activa el lock
 					if(db.find(k) != db.end())
 					{
 				
@@ -112,8 +117,8 @@ void* funcion_thread( void* arg){
 					{
 						strcpy(mensaje,"No existe la key a eliminar");
 					}
-					pthread_rwlock_unlock(p);
                   		 	write(conn->sock, mensaje, 50000);
+					pthread_rwlock_unlock(p);//Se libera el lock
 				}
 				else if (strcmp(token,"i2")==0)//Comando: insert(key,value)
 				{
@@ -122,7 +127,8 @@ void* funcion_thread( void* arg){
 					int key = stoi(k);
 					token = strtok(NULL, ",");
 					string value = token;
-					pthread_rwlock_wrlock(p);
+					//Secccion critica
+					pthread_rwlock_wrlock(p);//Se activa el lock
 					if(db.find(key) != db.end())
 					{
 						string error = "Error: La Key ya se encuentra en la BD";
@@ -136,7 +142,7 @@ void* funcion_thread( void* arg){
 						db.insert(std::pair<unsigned long, string>(key,value));
 						write(conn->sock, mensaje, 50000);
 					}
-					pthread_rwlock_unlock(p);
+					pthread_rwlock_unlock(p);//Se libera el lock
 				
 				}
 
@@ -148,7 +154,8 @@ void* funcion_thread( void* arg){
 					token = strtok(NULL, ",");
 					token[strlen(token)] = '\0';
 					string value = token;
-					pthread_rwlock_wrlock(p);
+					//Secccion critica
+					pthread_rwlock_wrlock(p);//Se activa el lock
 					if(db.find(key) == db.end())
 					{
 						string error = "Error: La Key no se encuentra en la BD";
@@ -162,7 +169,7 @@ void* funcion_thread( void* arg){
 						db[key] = value;
 						write(conn->sock, mensaje, 50000);
 					}
-					pthread_rwlock_unlock(p);
+					pthread_rwlock_unlock(p);//Se libera el lock
 				
 				}
 				else if (strcmp(token,"l")==0)//Comando: list
@@ -170,7 +177,8 @@ void* funcion_thread( void* arg){
 					string lista = "[";//Se añade corchete a la lista
 					//Se leen todas las key y si es encontrada la key se manda a la lista 
 					map<unsigned long, string>::iterator it;
-					pthread_rwlock_rdlock(p);
+					//Secccion critica
+					pthread_rwlock_rdlock(p);//Se activa el lock
 					for ( it = db.begin(); it != db.end(); it++ )
 					{
 						stringstream k;
@@ -178,11 +186,11 @@ void* funcion_thread( void* arg){
 						lista += " "+k.str()+" ";
   
 					}
-					pthread_rwlock_unlock(p);
 					//Se le coloca corchete final a la lista
 					lista += "]";
 					strcpy(mensaje,lista.c_str());
 					write(conn->sock,mensaje, 50000);
+					pthread_rwlock_unlock(p);//Se libera el lock
 					
 				}
 
