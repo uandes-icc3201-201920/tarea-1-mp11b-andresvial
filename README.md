@@ -6,6 +6,8 @@ Repositorio base para tarea 1 de Sistemas Operativos y Redes 201920
 
 * Los comandos: que se cumpliera el timeout del comando connect, diferenciar en el codigo los comandos insert(key,value) e insert(value), el manejo de substrings para estos comandos.
 
+* El uso concurrente de threads: lograr la conexion de mas de un cliente a la vez y ejecutar sus pedidos con locks escritura/lectura.
+
 **Funciones no implementadas:**
 * Faltó implementar el timeout de 10 segundos para cuando se ejecuta el cliente
 
